@@ -1,0 +1,39 @@
+{
+  "name": "phonenumber-parser",
+  "version": "1.0.0",
+  "description": "phonenumber-parser",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.mjs"
+    }
+  },
+  "type": "module",
+  "node": ">=16",
+  "scripts": {
+    "test": "vitest run",
+    "build": "rm -rf dist lib && pnpm tsc --p tsconfig.build.json && rollup -c && rm -rf dist"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sinclair/typebox": "^0.32.20",
+    "@sinclair/typebox-codegen": "^0.9.9",
+    "dotenv": "^16.4.5",
+    "htmlparser2": "^9.1.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^20.12.2",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "eslint": "^8.57.0",
+    "rollup": "^4.13.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.3",
+    "vitest": "^1.4.0",
+    "node-utils": "github:thomasskk/node-utils"
+  }
+}
