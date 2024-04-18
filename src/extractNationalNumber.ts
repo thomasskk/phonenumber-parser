@@ -1,5 +1,5 @@
 import { checkNumberLengthForType } from './checkNumberLengthForType.js'
-import { getPossibleLenghts } from './generate.js'
+import { getPossibleLenghts } from './getPossibleLenghts.js'
 import { matchesEntirely } from './matchesEntirely.js'
 import { Territory } from './schema.js'
 

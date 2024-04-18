@@ -1,66 +1,6 @@
 import { Type, Static } from '@sinclair/typebox'
 
-export const CarrierCodeFormattingRule = Type.Union([
-  Type.Literal('$CC $FG'),
-  Type.Literal('$NP $CC ($FG)'),
-  Type.Literal('$CC ($FG)'),
-  Type.Literal('$NP$CC $FG'),
-  Type.Literal('$NP$CC-$FG'),
-])
-
-export const NationalPrefixFormattingRule = Type.Union([
-  Type.Literal('($FG)'),
-  Type.Literal('($NP $FG)'),
-  Type.Literal('$NP 0$FG'),
-  Type.Literal('$NP$FG'),
-  Type.Literal('$NP $FG'),
-  Type.Literal('($NP$FG)'),
-  Type.Literal('$NP ($FG)'),
-  Type.Literal('($NP-$FG)'),
-  Type.Literal('0$FG'),
-])
-
-export const Format = Type.Union([
-  Type.Literal('$1-$2 $3'),
-  Type.Literal('$1-$2 $3-$4'),
-  Type.Literal('$1-$2'),
-  Type.Literal('$1 $2-$3'),
-  Type.Literal('$1 $2-$3-$4'),
-  Type.Literal('$1-$2 $3 $4 $5'),
-  Type.Literal('$1-$2-$3'),
-  Type.Literal('$1-$2-$3-$4'),
-  Type.Literal('($1) $2-$3'),
-  Type.Literal('$1/$2 $3 $4'),
-  Type.Literal('$1.$2.$3'),
-  Type.Literal('$1-$2 $3 $4'),
-  Type.Literal('$1'),
-  Type.Literal('$1 $2'),
-  Type.Literal('$1 $2 $3'),
-  Type.Literal('$1 $2 $3 $4'),
-  Type.Literal('$1 $2 $3 $4 $5'),
-  Type.Literal('$2 $3 $4'),
-  Type.Literal('$2 15-$3-$4'),
-])
-
-export const IntlFormat = Type.Union([
-  Type.Literal('$1-$2-$3'),
-  Type.Literal('$1 $2 $3 $4'),
-  Type.Literal('NA'),
-  Type.Literal('$1 $2'),
-  Type.Literal('$1 $2 $3'),
-  Type.Literal('$1 $2 $3-$4'),
-  Type.Literal('$1 $2 $3 $4 $5'),
-])
-
-export const PreferredInternationalPrefix = Type.Union([
-  Type.Literal('0~0'),
-  Type.Literal('00'),
-  Type.Literal('0011'),
-  Type.Literal('020'),
-  Type.Literal('8~10'),
-])
-
-export const NoInternationalDiallingPossibleLengths = Type.Object({
+const NoInternationalDiallingPossibleLengths = Type.Object({
   national: Type.String(),
 })
 
@@ -85,12 +25,12 @@ export const NumberFormatElement = Type.Object({
   leadingDigits: Type.Optional(
     Type.Union([Type.String(), Type.Array(Type.String())])
   ),
-  format: Format,
+  format: Type.String(),
   pattern: Type.String(),
-  nationalPrefixFormattingRule: Type.Optional(NationalPrefixFormattingRule),
-  intlFormat: Type.Optional(IntlFormat),
+  nationalPrefixFormattingRule: Type.Optional(Type.String()),
+  intlFormat: Type.Optional(Type.String()),
   nationalPrefixOptionalWhenFormatting: Type.Optional(Type.Boolean()),
-  carrierCodeFormattingRule: Type.Optional(CarrierCodeFormattingRule),
+  carrierCodeFormattingRule: Type.Optional(Type.String()),
 })
 
 export const GeneralDesc = Type.Object({
@@ -131,7 +71,7 @@ export const Territory = Type.Object({
   nationalPrefixTransformRule: Type.Optional(Type.String()),
   mobileNumberPortableRegion: Type.Optional(Type.Boolean()),
   mainCountryForCode: Type.Optional(Type.Boolean()),
-  preferredInternationalPrefix: Type.Optional(PreferredInternationalPrefix),
+  preferredInternationalPrefix: Type.Optional(Type.String()),
   voicemail: Type.Optional(FixedLine),
   preferredExtnPrefix: Type.Optional(Type.String()),
 })

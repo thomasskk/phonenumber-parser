@@ -1,5 +1,4 @@
-import { Metadata } from './metadata.js';
-export declare const extractCountryCallingCode: (number: string, metadata: Metadata) => {
+export declare const extractCountryCallingCode: (number: string) => {
     countryCallingCode?: string;
     number?: string;
 };

@@ -13,7 +13,8 @@
   "node": ">=16",
   "scripts": {
     "test": "vitest run",
-    "build": "rm -rf dist lib && pnpm tsc --p tsconfig.build.json && rollup -c && rm -rf dist"
+    "build": "rm -fr lib && rollup -c && pnpm generate:metadata",
+    "generate:metadata": "tsx ./src/scripts/generate.ts"
   },
   "author": "",
   "license": "ISC",
@@ -30,10 +31,10 @@
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "eslint": "^8.57.0",
+    "node-utils": "github:thomasskk/node-utils",
     "rollup": "^4.13.2",
     "tslib": "^2.6.2",
     "typescript": "^5.4.3",
-    "vitest": "^1.4.0",
-    "node-utils": "github:thomasskk/node-utils"
+    "vitest": "^1.4.0"
   }
 }

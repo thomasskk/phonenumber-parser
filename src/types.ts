@@ -6,7 +6,7 @@ export type PhoneNumberType = (typeof PHONE_NUMBER_TYPES)[number]
 export type NonFixedLinePhoneNumberType =
   (typeof NON_FIXED_LINE_PHONE_TYPES)[number]
 
-export type MetadataObject = {
+export type Metadata = {
   countries: Record<string, Territory>
   nonGeographic: Record<string, Territory>
   countryCallingCodes: Record<string, string[]>

@@ -1,71 +1,84 @@
 import { Territory } from './schema.js'
-import { MetadataObject } from './types.js'
 import { getNumberType } from './getCountryByNationalNumber.js'
+import metadata from '../metadata.json' assert { type: 'json' }
+import { valueInObj } from 'node-utils'
 
-export class Metadata {
-  constructor(public metadata: MetadataObject) {}
+export const hasCallingCode = (callingCode: string): boolean => {
+  if (valueInObj(callingCode, metadata.countryCallingCodes)) return true
+  if (valueInObj(callingCode, metadata.nonGeographic)) return true
+  return false
+}
 
-  hasCallingCode(callingCode: string): boolean {
-    if (this.metadata.countryCallingCodes[callingCode]) return true
-    if (this.metadata.nonGeographic[callingCode]) return true
+export const getPlanMetadata = ({
+  callingCode,
+}: {
+  callingCode: string
+}): Territory => {
+  if (valueInObj(callingCode, metadata.countryCallingCodes)) {
+    const countryCode = metadata.countryCallingCodes[callingCode][0]
 
-    return false
-  }
-
-  isNonGeographicCallingCode(callingCode: string): boolean {
-    return this.metadata.nonGeographic[callingCode] ? true : false
-  }
-
-  getPlanMetadata({ callingCode }: { callingCode: string }): Territory {
-    if (!this.hasCallingCode(callingCode)) {
-      throw new Error(`Unknown calling code: ${callingCode}`)
+    if (valueInObj(countryCode, metadata.countries)) {
+      return metadata.countries[countryCode]
     }
-
-    const countryCode = this.metadata.countryCallingCodes[callingCode]?.[0]
-    if (countryCode) return this.metadata.countries[countryCode]
-
-    return this.metadata.nonGeographic[callingCode]
   }
 
-  getExactCountry(
-    callingCode: string,
-    nationalNumber: string
-  ): { country?: string; countryMetadata?: Territory } {
-    const countries = this.metadata.countryCallingCodes[callingCode]
-    if (!countries) {
+  if (valueInObj(callingCode, metadata.nonGeographic)) {
+    return metadata.nonGeographic[callingCode]
+  }
+
+  throw new Error(`Unknown calling code: ${callingCode}`)
+}
+
+export const getExactCountry = (
+  callingCode: string,
+  nationalNumber: string
+): { country?: string; countryMetadata?: Territory } => {
+  if (!valueInObj(callingCode, metadata.countryCallingCodes)) {
+    if (valueInObj(callingCode, metadata.nonGeographic)) {
       return {
-        countryMetadata: this.metadata.nonGeographic[callingCode],
+        countryMetadata: metadata.nonGeographic[callingCode],
       }
     }
 
-    for (const country of countries) {
-      const countryMetadata = this.metadata.countries[country]
-      if (!countryMetadata) continue
-      const leadingDigits = countryMetadata.leadingDigits
+    return {}
+  }
 
-      if (leadingDigits) {
-        if (nationalNumber.search(leadingDigits) === 0) {
-          return {
-            country,
-            countryMetadata,
-          }
-        }
-      } else if (
-        getNumberType({
-          nationalNumber,
-          countryMetadata,
-        })
-      ) {
+  const countries = metadata.countryCallingCodes[callingCode]
+
+  for (const country of countries) {
+    if (!valueInObj(country, metadata.countries)) continue
+    const countryMetadata = metadata.countries[country]
+
+    if (!countryMetadata) continue
+
+    if ('leadingDigits' in countryMetadata) {
+      if (nationalNumber.search(countryMetadata.leadingDigits) === 0) {
         return {
           country,
           countryMetadata,
         }
       }
+    } else if (
+      getNumberType({
+        nationalNumber,
+        countryMetadata,
+      })
+    ) {
+      return {
+        country,
+        countryMetadata,
+      }
     }
+  }
 
+  if (valueInObj(countries[0], metadata.countries)) {
     return {
-      countryMetadata: this.metadata.countries[countries[0]],
+      countryMetadata: metadata.countries[countries[0]],
       country: countries[0],
     }
+  }
+
+  return {
+    country: countries[0],
   }
 }

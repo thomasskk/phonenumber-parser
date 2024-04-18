@@ -1,5 +1,5 @@
 import { NON_FIXED_LINE_PHONE_TYPES } from './constants.js'
-import { getPhoneNumberTypes } from './generate.js'
+import { getPhoneNumberTypes } from './getPhoneNumberTypes.js'
 import { matchesEntirely } from './matchesEntirely.js'
 import { Territory } from './schema.js'
 import { PhoneNumberType } from './types.js'

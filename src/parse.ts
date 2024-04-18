@@ -6,8 +6,7 @@ import { extractFormattedPhoneNumberFromPossibleRfc3966NumberUri } from './extra
 import { extractNationalNumber } from './extractNationalNumber.js'
 import { getNumberType } from './getCountryByNationalNumber.js'
 import { matchesEntirely } from './matchesEntirely.js'
-import { Metadata } from './metadata.js'
-import { getMetadata } from './utils.js'
+import { getPlanMetadata, getExactCountry } from './metadata.js'
 
 const isViablePhoneNumber = (number: string): boolean =>
   number.length >= MIN_LENGTH_FOR_NSN
@@ -25,8 +24,6 @@ const parseInput = (text: string): { ext?: string; number?: string } => {
   }
   return { number }
 }
-
-const metadata = new Metadata(getMetadata())
 
 export const parse = (
   text: string
@@ -49,22 +46,21 @@ export const parse = (
   }
 
   const { countryCallingCode, number } = extractCountryCallingCode(
-    parseIncompletePhoneNumber(formattedPhoneNumber),
-    metadata
+    parseIncompletePhoneNumber(formattedPhoneNumber)
   )
 
   if (!countryCallingCode) {
-    throw new Error()
+    throw new Error('Invalid phone number')
   }
 
   const nationalNumber = extractNationalNumber(
     parseIncompletePhoneNumber(number),
-    metadata.getPlanMetadata({
+    getPlanMetadata({
       callingCode: countryCallingCode,
     })
   )
 
-  const { country, countryMetadata } = metadata.getExactCountry(
+  const { country, countryMetadata } = getExactCountry(
     countryCallingCode,
     nationalNumber
   )
@@ -74,7 +70,7 @@ export const parse = (
     nationalNumber.length < MIN_LENGTH_FOR_NSN ||
     nationalNumber.length > MAX_LENGTH_FOR_NSN
   ) {
-    throw new Error()
+    throw new Error('Invalid phone number')
   }
 
   const numberType = countryMetadata

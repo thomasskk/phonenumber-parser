@@ -1,4 +1,5 @@
-import { getPhoneNumberTypes, getPossibleLenghts } from './generate.js'
+import { getPhoneNumberTypes } from './getPhoneNumberTypes.js'
+import { getPossibleLenghts } from './getPossibleLenghts.js'
 import { Territory } from './schema.js'
 import { PhoneNumberType } from './types.js'
 
