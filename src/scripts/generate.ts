@@ -1,9 +1,8 @@
 import { TypeCompiler } from '@sinclair/typebox/compiler'
-import { sizeof, xml2js } from 'node-utils'
+import { sizeof, xml2js, downloadFile } from 'node-utils'
 import fs from 'fs'
 import path from 'path'
 import { XMLSchema, Territory } from '../schema.js'
-import stream from 'stream'
 
 const __dirname = new URL('.', import.meta.url).pathname
 
@@ -12,17 +11,17 @@ const OLD_XML_PATH = path.join(__dirname, 'PhoneNumberMetadata.xml.old')
 const XML_URL =
   'https://raw.githubusercontent.com/google/libphonenumber/master/resources/PhoneNumberMetadata.xml'
 
-if (fs.existsSync(XML_PATH)) {
-  await fs.promises.rename(XML_PATH, OLD_XML_PATH)
+await fs.promises.rename(XML_PATH, OLD_XML_PATH)
+
+const downloadFileRes = await downloadFile({
+  path: XML_PATH,
+  url: XML_URL,
+})
+
+if (!downloadFileRes.success) {
+  await fs.promises.rename(OLD_XML_PATH, XML_PATH)
+  throw new Error(downloadFileRes.error)
 }
-
-const res = await fetch(XML_URL)
-if (!res.body) throw new Error('Response body is missing')
-
-const fileStream = fs.createWriteStream(XML_PATH)
-await stream.promises.finished(
-  stream.Readable.fromWeb(res.body).pipe(fileStream)
-)
 
 const xmlString = await fs.promises.readFile(XML_PATH, 'utf8')
 
