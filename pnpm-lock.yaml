@@ -39,7 +39,7 @@ devDependencies:
     version: 8.57.0
   node-utils:
     specifier: github:thomasskk/node-utils
-    version: github.com/thomasskk/node-utils/cbfb51515fb681398f0f59658bcfab8a2a33664e
+    version: github.com/thomasskk/node-utils/e02101e084c8cded61df7f94a08002c36bcab110
   rollup:
     specifier: ^4.13.2
     version: 4.14.3
@@ -2081,8 +2081,8 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
-  github.com/thomasskk/node-utils/cbfb51515fb681398f0f59658bcfab8a2a33664e:
-    resolution: {tarball: https://codeload.github.com/thomasskk/node-utils/tar.gz/cbfb51515fb681398f0f59658bcfab8a2a33664e}
+  github.com/thomasskk/node-utils/e02101e084c8cded61df7f94a08002c36bcab110:
+    resolution: {tarball: https://codeload.github.com/thomasskk/node-utils/tar.gz/e02101e084c8cded61df7f94a08002c36bcab110}
     name: node-utils
     version: 1.0.0
     dependencies:

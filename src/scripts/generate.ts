@@ -1,5 +1,5 @@
 import { TypeCompiler } from '@sinclair/typebox/compiler'
-import { xml2js } from 'node-utils'
+import { sizeof, xml2js } from 'node-utils'
 import fs from 'fs'
 import path from 'path'
 import { XMLSchema, Territory } from '../schema.js'
@@ -11,6 +11,7 @@ const xmlString = fs.readFileSync(
 )
 
 const xml = TypeCompiler.Compile(XMLSchema).Decode(xml2js(xmlString))
+console.log(sizeof(xml))
 
 const countries: Record<string, Territory> = {}
 const nonGeographic: Record<string, Territory> = {}

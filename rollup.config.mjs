@@ -16,7 +16,7 @@ export default {
   output: [
     {
       format: 'esm',
-      dir: 'lib',
+      file: 'lib/index.mjs',
     },
   ],
 }
