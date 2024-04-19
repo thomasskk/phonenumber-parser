@@ -90,3 +90,4 @@ export const XMLSchema = Type.Object({
 
 export type XML = Static<typeof XMLSchema>
 export type Territory = Static<typeof Territory>
+export type NumberFormatElement = Static<typeof NumberFormatElement>

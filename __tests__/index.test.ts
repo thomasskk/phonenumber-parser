@@ -91,7 +91,7 @@ describe('parse', () => {
   it('should parse non-geographic numbering plan phone numbers (extended)', () => {
     expect(parse('+870773111632')).toMatchObject({
       country: undefined,
-      countryCallingCode: '870',
+      countryCode: '870',
       phone: '773111632',
       ext: undefined,
       possible: true,

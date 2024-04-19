@@ -1,9 +1,10 @@
 import { checkNumberLengthForType } from './checkNumberLengthForType.js'
 import { MIN_LENGTH_FOR_NSN, MAX_LENGTH_FOR_NSN } from './constants.js'
-import { extractCountryCallingCode } from './extractCountryCallingCode.js'
+import { extractCountryCode } from './extractCountryCode.js'
 import { extractExtension } from './extractExtension.js'
 import { extractFormattedPhoneNumberFromPossibleRfc3966NumberUri } from './extractFormattedPhoneNumberFromPossibleRfc3966NumberUri.js'
 import { extractNationalNumber } from './extractNationalNumber.js'
+import { format } from './format.js'
 import { getNumberType } from './getCountryByNationalNumber.js'
 import { matchesEntirely } from './matchesEntirely.js'
 import { getPlanMetadata, getExactCountry } from './metadata.js'
@@ -11,7 +12,7 @@ import { getPlanMetadata, getExactCountry } from './metadata.js'
 const isViablePhoneNumber = (number: string): boolean =>
   number.length >= MIN_LENGTH_FOR_NSN
 
-const parseInput = (text: string): { ext?: string; number?: string } => {
+export const parseInput = (text: string): { ext?: string; number?: string } => {
   const number = extractFormattedPhoneNumberFromPossibleRfc3966NumberUri(text)
   if (!number) return {}
 
@@ -29,11 +30,12 @@ export const parse = (
   text: string
 ): {
   country?: string
+  countryCode: string
   phone: string
-  countryCallingCode: string
-  number: string
-  nationalNumber: string
-  carrierCode?: string
+  national: string
+  international: string
+  RFC3966: string
+  E164: string
   possible: boolean
   valid: boolean
   type?: string
@@ -45,23 +47,55 @@ export const parse = (
     throw new Error('Invalid phone number')
   }
 
-  const { countryCallingCode, number } = extractCountryCallingCode(
+  const { countryCode, number } = extractCountryCode(
     parseIncompletePhoneNumber(formattedPhoneNumber)
   )
 
-  if (!countryCallingCode) {
+  if (!countryCode || !number) {
     throw new Error('Invalid phone number')
   }
+
+  const planMetadata = getPlanMetadata({
+    countryCode,
+  })
 
   const nationalNumber = extractNationalNumber(
     parseIncompletePhoneNumber(number),
     getPlanMetadata({
-      callingCode: countryCallingCode,
+      countryCode,
     })
   )
 
+  const national = format({
+    countryCode,
+    nationalNumber,
+    planMetadata,
+    format: 'NATIONAL',
+  })
+
+  const international = format({
+    countryCode,
+    nationalNumber,
+    planMetadata,
+    format: 'INTERNATIONAL',
+  })
+
+  const E164 = format({
+    countryCode,
+    nationalNumber,
+    planMetadata,
+    format: 'E.164',
+  })
+
+  const RFC3966 = format({
+    countryCode,
+    nationalNumber,
+    planMetadata,
+    format: 'RFC3966',
+  })
+
   const { country, countryMetadata } = getExactCountry(
-    countryCallingCode,
+    countryCode,
     nationalNumber
   )
 
@@ -77,29 +111,29 @@ export const parse = (
     ? getNumberType({ nationalNumber, countryMetadata })
     : undefined
 
-  const isValid = () => {
-    if (!countryMetadata) return false
-
-    return (
-      numberType !== undefined ||
+  const isValid = !countryMetadata
+    ? false
+    : numberType !== undefined ||
       matchesEntirely(
         nationalNumber,
         countryMetadata.generalDesc.nationalNumberPattern
       )
-    )
-  }
+
+  const isPossible = countryMetadata
+    ? checkNumberLengthForType(nationalNumber, countryMetadata) ===
+      'IS_POSSIBLE'
+    : false
 
   return {
     country,
-    phone: nationalNumber,
-    countryCallingCode,
-    number: `+${countryCallingCode}${nationalNumber}`,
-    nationalNumber,
-    possible: countryMetadata
-      ? checkNumberLengthForType(nationalNumber, countryMetadata) ===
-        'IS_POSSIBLE'
-      : false,
-    valid: isValid(),
+    phone: number,
+    countryCode,
+    international,
+    national,
+    E164,
+    RFC3966,
+    possible: isPossible,
+    valid: isValid,
     type: numberType,
     ext,
   }
@@ -110,7 +144,7 @@ const isSingleDigit = (s: string): boolean => {
   return charCode >= 48 && charCode <= 57
 }
 
-const parseIncompletePhoneNumber = (str?: string): string => {
+export const parseIncompletePhoneNumber = (str?: string): string => {
   let result = ''
   if (!str) return result
   for (const character of str.split('')) {

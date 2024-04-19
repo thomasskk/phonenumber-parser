@@ -23,7 +23,7 @@
     "@sinclair/typebox-codegen": "^0.9.9",
     "dotenv": "^16.4.5",
     "htmlparser2": "^9.1.0",
-    "node-utils": "github:thomasskk/node-utils#main"
+    "node-utils": "github:thomasskk/node-utils"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",

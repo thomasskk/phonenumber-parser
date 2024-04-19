@@ -1,9 +1,10 @@
 import { Territory } from './schema.js';
-export declare const hasCallingCode: (callingCode: string) => boolean;
-export declare const getPlanMetadata: ({ callingCode, }: {
-    callingCode: string;
+export declare const hasCountryCode: (countryCode: string) => boolean;
+export declare const getPlanMetadata: ({ countryCode, }: {
+    countryCode: string;
 }) => Territory;
-export declare const getExactCountry: (callingCode: string, nationalNumber: string) => {
+export declare const getExactCountry: (countryCode: string, nationalNumber: string) => {
     country?: string;
     countryMetadata?: Territory;
 };
+export declare const toArray: <P>(value: P | P[] | undefined) => P[];

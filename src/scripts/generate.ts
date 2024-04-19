@@ -31,7 +31,7 @@ console.log(sizeof(xml))
 
 const countries: Record<string, Territory> = {}
 const nonGeographic: Record<string, Territory> = {}
-const countryCallingCodes: Record<string, string[]> = {}
+const countryCodes: Record<string, string[]> = {}
 
 for (const territory of xml.phoneNumberMetadata.territories.territory) {
   if (territory.id !== '001' && !territory.internationalPrefix) {
@@ -47,19 +47,19 @@ for (const territory of xml.phoneNumberMetadata.territories.territory) {
   } else {
     countries[territory.id] = territory
 
-    if (!countryCallingCodes[territory.countryCode]) {
-      countryCallingCodes[territory.countryCode] = []
+    if (!countryCodes[territory.countryCode]) {
+      countryCodes[territory.countryCode] = []
     }
 
     if (territory.mainCountryForCode) {
-      countryCallingCodes[territory.countryCode].unshift(territory.id)
+      countryCodes[territory.countryCode].unshift(territory.id)
     } else {
-      countryCallingCodes[territory.countryCode].push(territory.id)
+      countryCodes[territory.countryCode].push(territory.id)
     }
   }
 }
 
-const metadata = { countries, nonGeographic, countryCallingCodes }
+const metadata = { countries, nonGeographic, countryCodes }
 
 const rootDir = process.cwd()
 

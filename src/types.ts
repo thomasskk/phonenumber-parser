@@ -9,10 +9,12 @@ export type NonFixedLinePhoneNumberType =
 export type Metadata = {
   countries: Record<string, Territory>
   nonGeographic: Record<string, Territory>
-  countryCallingCodes: Record<string, string[]>
+  countryCodes: Record<string, string[]>
 }
 
 export type PhoneNumberTypesData = Record<
   Partial<PhoneNumberType>,
   { pattern: string; possibleLengths: number[] }
 >
+
+export type Format = 'NATIONAL' | 'INTERNATIONAL' | 'E.164' | 'RFC3966'

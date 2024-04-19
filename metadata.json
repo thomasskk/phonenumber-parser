@@ -16047,7 +16047,7 @@
       }
     }
   },
-  "countryCallingCodes": {
+  "countryCodes": {
     "1": [
       "US",
       "AG",

@@ -3,47 +3,47 @@ import { getNumberType } from './getCountryByNationalNumber.js'
 import metadata from '../metadata.json' assert { type: 'json' }
 import { valueInObj } from 'node-utils'
 
-export const hasCallingCode = (callingCode: string): boolean => {
-  if (valueInObj(callingCode, metadata.countryCallingCodes)) return true
-  if (valueInObj(callingCode, metadata.nonGeographic)) return true
+export const hasCountryCode = (countryCode: string): boolean => {
+  if (valueInObj(countryCode, metadata.countryCodes)) return true
+  if (valueInObj(countryCode, metadata.nonGeographic)) return true
   return false
 }
 
 export const getPlanMetadata = ({
-  callingCode,
+  countryCode,
 }: {
-  callingCode: string
+  countryCode: string
 }): Territory => {
-  if (valueInObj(callingCode, metadata.countryCallingCodes)) {
-    const countryCode = metadata.countryCallingCodes[callingCode][0]
+  if (valueInObj(countryCode, metadata.countryCodes)) {
+    const code = metadata.countryCodes[countryCode][0]
 
-    if (valueInObj(countryCode, metadata.countries)) {
-      return metadata.countries[countryCode]
+    if (valueInObj(code, metadata.countries)) {
+      return metadata.countries[code]
     }
   }
 
-  if (valueInObj(callingCode, metadata.nonGeographic)) {
-    return metadata.nonGeographic[callingCode]
+  if (valueInObj(countryCode, metadata.nonGeographic)) {
+    return metadata.nonGeographic[countryCode]
   }
 
-  throw new Error(`Unknown calling code: ${callingCode}`)
+  throw new Error(`Unknown country code: ${countryCode}`)
 }
 
 export const getExactCountry = (
-  callingCode: string,
+  countryCode: string,
   nationalNumber: string
 ): { country?: string; countryMetadata?: Territory } => {
-  if (!valueInObj(callingCode, metadata.countryCallingCodes)) {
-    if (valueInObj(callingCode, metadata.nonGeographic)) {
+  if (!valueInObj(countryCode, metadata.countryCodes)) {
+    if (valueInObj(countryCode, metadata.nonGeographic)) {
       return {
-        countryMetadata: metadata.nonGeographic[callingCode],
+        countryMetadata: metadata.nonGeographic[countryCode],
       }
     }
 
     return {}
   }
 
-  const countries = metadata.countryCallingCodes[callingCode]
+  const countries = metadata.countryCodes[countryCode]
 
   for (const country of countries) {
     if (!valueInObj(country, metadata.countries)) continue
@@ -81,4 +81,14 @@ export const getExactCountry = (
   return {
     country: countries[0],
   }
+}
+
+export const toArray = <P>(value: P | P[] | undefined): P[] => {
+  if (value === undefined) {
+    return []
+  }
+  if (Array.isArray(value)) {
+    return value
+  }
+  return [value]
 }

@@ -549,3 +549,4 @@ export declare const XMLSchema: import("@sinclair/typebox").TObject<{
 }>;
 export type XML = Static<typeof XMLSchema>;
 export type Territory = Static<typeof Territory>;
+export type NumberFormatElement = Static<typeof NumberFormatElement>;

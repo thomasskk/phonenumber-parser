@@ -1,19 +1,19 @@
 import { MAX_LENGTH_COUNTRY_CODE } from './constants.js'
-import { hasCallingCode } from './metadata.js'
+import { hasCountryCode } from './metadata.js'
 
-export const extractCountryCallingCode = (
+export const extractCountryCode = (
   number: string
-): { countryCallingCode?: string; number?: string } => {
+): { countryCode?: string; number?: string } => {
   if (number[0] !== '+') return { number }
   if (number[1] === '0' || number.length <= 3) return {}
 
   let i = 2
   while (i - 1 <= MAX_LENGTH_COUNTRY_CODE && i <= number.length) {
-    const countryCallingCode = number.slice(1, i)
+    const countryCode = number.slice(1, i)
 
-    if (hasCallingCode(countryCallingCode)) {
+    if (hasCountryCode(countryCode)) {
       return {
-        countryCallingCode,
+        countryCode,
         number: number.slice(i),
       }
     }
