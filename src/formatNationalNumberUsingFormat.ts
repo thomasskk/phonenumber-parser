@@ -6,7 +6,7 @@ export const FIRST_GROUP_PATTERN = /(\$\d)/
 const getNationalPrefixFormattingRule = (
   rule?: string,
   national_prefix?: string
-) => {
+): string | undefined => {
   if (!rule || !national_prefix) return
   return rule.replace('$NP', national_prefix).replace('$FG', '$1')
 }
@@ -17,7 +17,7 @@ export const formatNationalNumberUsingFormat = (
   useInternationalFormat: boolean,
   withNationalPrefix: boolean,
   nationalPrefix?: string
-) => {
+): string => {
   const nationalPrefixFormattingRule = getNationalPrefixFormattingRule(
     format.nationalPrefixFormattingRule,
     nationalPrefix
@@ -31,10 +31,12 @@ export const formatNationalNumberUsingFormat = (
       ? format.format.replace(FIRST_GROUP_PATTERN, nationalPrefixFormattingRule)
       : format.format
   )
+
   if (useInternationalFormat) {
     return formattedNumber
       .replace(new RegExp(`[${VALID_PUNCTUATION}]+`, 'g'), ' ')
       .trim()
   }
+
   return formattedNumber
 }

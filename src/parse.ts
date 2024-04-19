@@ -16,13 +16,12 @@ export const parseInput = (text: string): { ext?: string; number?: string } => {
   const number = extractFormattedPhoneNumberFromPossibleRfc3966NumberUri(text)
   if (!number) return {}
 
-  if (!isViablePhoneNumber(number)) {
-    return {}
-  }
+  if (!isViablePhoneNumber(number)) return {}
+
   const withExtensionStripped = extractExtension(number)
-  if (withExtensionStripped) {
-    return withExtensionStripped
-  }
+
+  if (withExtensionStripped) return withExtensionStripped
+
   return { number }
 }
 
@@ -66,6 +65,13 @@ export const parse = (
     })
   )
 
+  if (
+    nationalNumber.length < MIN_LENGTH_FOR_NSN ||
+    nationalNumber.length > MAX_LENGTH_FOR_NSN
+  ) {
+    throw new Error('Invalid phone number')
+  }
+
   const national = format({
     countryCode,
     nationalNumber,
@@ -98,14 +104,6 @@ export const parse = (
     countryCode,
     nationalNumber
   )
-
-  if (
-    !nationalNumber ||
-    nationalNumber.length < MIN_LENGTH_FOR_NSN ||
-    nationalNumber.length > MAX_LENGTH_FOR_NSN
-  ) {
-    throw new Error('Invalid phone number')
-  }
 
   const numberType = countryMetadata
     ? getNumberType({ nationalNumber, countryMetadata })

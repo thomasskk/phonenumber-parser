@@ -1,7 +1,7 @@
 import { formatNationalNumberUsingFormat } from './formatNationalNumberUsingFormat.js'
 import { matchesEntirely } from './matchesEntirely.js'
 import { toArray } from './metadata.js'
-import { NumberFormatElement, Territory } from './schema.js'
+import { Territory } from './schema.js'
 import { Format } from './types.js'
 
 const DEFAULT_EXT_PREFIX = ' ext. '
@@ -10,25 +10,51 @@ const formatNationalNumber = (
   number: string,
   formatAs: Format,
   planMetadata: Territory
-) => {
-  const format = chooseFormatForNumber(planMetadata.availableFormats, number)
-  if (!format) return number
+): string => {
+  const numberFormat = planMetadata.availableFormats?.numberFormat
+  if (!numberFormat) return number
 
-  return formatNationalNumberUsingFormat(
-    number,
-    format,
-    formatAs === 'INTERNATIONAL',
-    !!format.nationalPrefixOptionalWhenFormatting,
-    planMetadata.nationalPrefix
-  )
+  for (const format of toArray(numberFormat)) {
+    const leadingDigits = toArray(format.leadingDigits)
+
+    if (leadingDigits.length > 0) {
+      const lastLeadingDigitsPattern = leadingDigits[leadingDigits.length - 1]
+      if (number.search(lastLeadingDigitsPattern) !== 0) {
+        continue
+      }
+    }
+
+    if (matchesEntirely(number, format.pattern)) {
+      return formatNationalNumberUsingFormat(
+        number,
+        format,
+        formatAs === 'INTERNATIONAL',
+        !!format.nationalPrefixOptionalWhenFormatting,
+        planMetadata.nationalPrefix
+      )
+    }
+  }
+
+  return number
 }
 
-const addExtension = (number: string, planMetadata: Territory, ext?: string) =>
-  ext
-    ? `${number}${planMetadata.preferredExtnPrefix ?? DEFAULT_EXT_PREFIX}${ext}`
-    : number
+const addExtension = (
+  number: string,
+  planMetadata: Territory,
+  ext?: string
+): string => {
+  if (!ext) return number
+  const prefix = planMetadata.preferredExtnPrefix ?? DEFAULT_EXT_PREFIX
+  return `${number}${prefix}${ext}`
+}
 
-const formatRFC3966 = ({ number, ext }: { number: string; ext?: string }) => {
+const formatRFC3966 = ({
+  number,
+  ext,
+}: {
+  number: string
+  ext?: string
+}): string => {
   return `tel:${number}${ext ? ';ext=' + ext : ''}`
 }
 
@@ -45,62 +71,35 @@ export const format = ({
   countryCode: string
   planMetadata: Territory
   ext?: string
-}) => {
-  if (format === 'NATIONAL') {
-    const number = formatNationalNumber(
-      nationalNumber,
-      'NATIONAL',
-      planMetadata
-    )
+}): string => {
+  switch (format) {
+    case 'NATIONAL':
+      return addExtension(
+        formatNationalNumber(nationalNumber, 'NATIONAL', planMetadata),
+        planMetadata,
+        ext
+      )
 
-    return addExtension(number, planMetadata, ext)
-  }
+    case 'INTERNATIONAL':
+      if (!nationalNumber) return `+${countryCode}`
 
-  if (format === 'INTERNATIONAL') {
-    if (!nationalNumber) {
-      return `+${countryCode}`
-    }
+      return addExtension(
+        `+${countryCode} ${formatNationalNumber(
+          nationalNumber,
+          'INTERNATIONAL',
+          planMetadata
+        )}`,
+        planMetadata,
+        ext
+      )
 
-    const number = `+${countryCode} ${formatNationalNumber(
-      nationalNumber,
-      'INTERNATIONAL',
-      planMetadata
-    )}`
+    case 'E.164':
+      return `+${countryCode}${nationalNumber}`
 
-    return addExtension(number, planMetadata, ext)
-  }
-
-  if (format === 'E.164') {
-    return `+${countryCode}${nationalNumber}`
-  }
-
-  if (format === 'RFC3966') {
-    return formatRFC3966({
-      number: `+${countryCode}${nationalNumber}`,
-      ext,
-    })
-  }
-
-  throw new Error()
-}
-
-export const chooseFormatForNumber = (
-  availableFormats: Territory['availableFormats'],
-  nationalNnumber: string
-): NumberFormatElement | undefined => {
-  const numberFormat = availableFormats?.numberFormat
-  if (!numberFormat) return
-
-  for (const format of toArray(numberFormat)) {
-    const leadingDigits = toArray(format.leadingDigits)
-    if (leadingDigits.length > 0) {
-      const lastLeadingDigitsPattern = leadingDigits[leadingDigits.length - 1]
-      if (nationalNnumber.search(lastLeadingDigitsPattern) !== 0) {
-        continue
-      }
-    }
-    if (matchesEntirely(nationalNnumber, format.pattern)) {
-      return format
-    }
+    case 'RFC3966':
+      return formatRFC3966({
+        number: `+${countryCode}${nationalNumber}`,
+        ext,
+      })
   }
 }

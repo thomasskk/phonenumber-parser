@@ -49,8 +49,6 @@ export const getExactCountry = (
     if (!valueInObj(country, metadata.countries)) continue
     const countryMetadata = metadata.countries[country]
 
-    if (!countryMetadata) continue
-
     if ('leadingDigits' in countryMetadata) {
       if (nationalNumber.search(countryMetadata.leadingDigits) === 0) {
         return {

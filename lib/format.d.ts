@@ -1,4 +1,4 @@
-import { NumberFormatElement, Territory } from './schema.js';
+import { Territory } from './schema.js';
 import { Format } from './types.js';
 export declare const format: ({ format, nationalNumber, countryCode, planMetadata, ext, }: {
     country?: string;
@@ -8,4 +8,3 @@ export declare const format: ({ format, nationalNumber, countryCode, planMetadat
     planMetadata: Territory;
     ext?: string;
 }) => string;
-export declare const chooseFormatForNumber: (availableFormats: Territory['availableFormats'], nationalNnumber: string) => NumberFormatElement | undefined;
