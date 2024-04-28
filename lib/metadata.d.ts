@@ -1,4 +1,4 @@
-import { Territory } from './schema.js';
+import type { Territory } from "./schema.js";
 export declare const hasCountryCode: (countryCode: string) => boolean;
 export declare const getPlanMetadata: ({ countryCode, }: {
     countryCode: string;

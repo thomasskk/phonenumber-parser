@@ -1,105 +1,105 @@
-import { formatNationalNumberUsingFormat } from './formatNationalNumberUsingFormat.js'
-import { matchesEntirely } from './matchesEntirely.js'
-import { toArray } from './metadata.js'
-import { Territory } from './schema.js'
-import { Format } from './types.js'
+import { formatNationalNumberUsingFormat } from "./formatNationalNumberUsingFormat.js";
+import { matchesEntirely } from "./matchesEntirely.js";
+import { toArray } from "./metadata.js";
+import type { Territory } from "./schema.js";
+import type { Format } from "./types.js";
 
-const DEFAULT_EXT_PREFIX = ' ext. '
+const DEFAULT_EXT_PREFIX = " ext. ";
 
 const formatNationalNumber = (
-  number: string,
-  formatAs: Format,
-  planMetadata: Territory
+	number: string,
+	formatAs: Format,
+	planMetadata: Territory,
 ): string => {
-  const numberFormat = planMetadata.availableFormats?.numberFormat
-  if (!numberFormat) return number
+	const numberFormat = planMetadata.availableFormats?.numberFormat;
+	if (!numberFormat) return number;
 
-  for (const format of toArray(numberFormat)) {
-    const leadingDigits = toArray(format.leadingDigits)
+	for (const format of toArray(numberFormat)) {
+		const leadingDigits = toArray(format.leadingDigits);
 
-    if (leadingDigits.length > 0) {
-      const lastLeadingDigitsPattern = leadingDigits[leadingDigits.length - 1]
-      if (number.search(lastLeadingDigitsPattern) !== 0) {
-        continue
-      }
-    }
+		if (leadingDigits.length > 0) {
+			const lastLeadingDigitsPattern = leadingDigits[leadingDigits.length - 1];
+			if (number.search(lastLeadingDigitsPattern) !== 0) {
+				continue;
+			}
+		}
 
-    if (matchesEntirely(number, format.pattern)) {
-      return formatNationalNumberUsingFormat(
-        number,
-        format,
-        formatAs === 'INTERNATIONAL',
-        !!format.nationalPrefixOptionalWhenFormatting,
-        planMetadata.nationalPrefix
-      )
-    }
-  }
+		if (matchesEntirely(number, format.pattern)) {
+			return formatNationalNumberUsingFormat(
+				number,
+				format,
+				formatAs === "INTERNATIONAL",
+				!!format.nationalPrefixOptionalWhenFormatting,
+				planMetadata.nationalPrefix,
+			);
+		}
+	}
 
-  return number
-}
+	return number;
+};
 
 const addExtension = (
-  number: string,
-  planMetadata: Territory,
-  ext?: string
+	number: string,
+	planMetadata: Territory,
+	ext?: string,
 ): string => {
-  if (!ext) return number
-  const prefix = planMetadata.preferredExtnPrefix ?? DEFAULT_EXT_PREFIX
-  return `${number}${prefix}${ext}`
-}
+	if (!ext) return number;
+	const prefix = planMetadata.preferredExtnPrefix ?? DEFAULT_EXT_PREFIX;
+	return `${number}${prefix}${ext}`;
+};
 
 const formatRFC3966 = ({
-  number,
-  ext,
+	number,
+	ext,
 }: {
-  number: string
-  ext?: string
+	number: string;
+	ext?: string;
 }): string => {
-  return `tel:${number}${ext ? ';ext=' + ext : ''}`
-}
+	return `tel:${number}${ext ? `;ext=${ext}` : ""}`;
+};
 
 export const format = ({
-  format,
-  nationalNumber,
-  countryCode,
-  planMetadata,
-  ext,
+	format,
+	nationalNumber,
+	countryCode,
+	planMetadata,
+	ext,
 }: {
-  country?: string
-  format: Format
-  nationalNumber: string
-  countryCode: string
-  planMetadata: Territory
-  ext?: string
+	country?: string;
+	format: Format;
+	nationalNumber: string;
+	countryCode: string;
+	planMetadata: Territory;
+	ext?: string;
 }): string => {
-  switch (format) {
-    case 'NATIONAL':
-      return addExtension(
-        formatNationalNumber(nationalNumber, 'NATIONAL', planMetadata),
-        planMetadata,
-        ext
-      )
+	switch (format) {
+		case "NATIONAL":
+			return addExtension(
+				formatNationalNumber(nationalNumber, "NATIONAL", planMetadata),
+				planMetadata,
+				ext,
+			);
 
-    case 'INTERNATIONAL':
-      if (!nationalNumber) return `+${countryCode}`
+		case "INTERNATIONAL":
+			if (!nationalNumber) return `+${countryCode}`;
 
-      return addExtension(
-        `+${countryCode} ${formatNationalNumber(
-          nationalNumber,
-          'INTERNATIONAL',
-          planMetadata
-        )}`,
-        planMetadata,
-        ext
-      )
+			return addExtension(
+				`+${countryCode} ${formatNationalNumber(
+					nationalNumber,
+					"INTERNATIONAL",
+					planMetadata,
+				)}`,
+				planMetadata,
+				ext,
+			);
 
-    case 'E.164':
-      return `+${countryCode}${nationalNumber}`
+		case "E.164":
+			return `+${countryCode}${nationalNumber}`;
 
-    case 'RFC3966':
-      return formatRFC3966({
-        number: `+${countryCode}${nationalNumber}`,
-        ext,
-      })
-  }
-}
+		case "RFC3966":
+			return formatRFC3966({
+				number: `+${countryCode}${nationalNumber}`,
+				ext,
+			});
+	}
+};

@@ -1,4 +1,4 @@
-import { Static } from '@sinclair/typebox';
+import { type Static } from "@sinclair/typebox";
 export declare const PersonalNumber: import("@sinclair/typebox").TObject<{
     possibleLengths: import("@sinclair/typebox").TObject<{
         national: import("@sinclair/typebox").TString;

@@ -1,6 +1,3 @@
-export const matchesEntirely = (
-  text: string = '',
-  regular_expression?: string
-) => {
-  return new RegExp('^(?:' + regular_expression + ')$').test(text)
-}
+export const matchesEntirely = (text = "", regular_expression?: string) => {
+	return new RegExp(`^(?:${regular_expression})$`).test(text);
+};
