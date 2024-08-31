@@ -1,5 +1,7 @@
 import { valueInObj } from "@thomasskk/node-utils/core";
-import metadata from "../metadata.json" with { type: "json" };
+const { default: metadata } = await import("../metadata.json", {
+	with: { type: "json" },
+});
 import { getNumberType } from "./getCountryByNationalNumber.js";
 import type { Territory } from "./schema.js";
 
