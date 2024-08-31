@@ -11,9 +11,14 @@
 		}
 	},
 	"release": {
-		"branches": ["main"]
+		"branches": [
+			"main"
+		]
 	},
-	"files": ["/lib", "metadata.json"],
+	"files": [
+		"/lib",
+		"metadata.json"
+	],
 	"publishConfig": {
 		"access": "public"
 	},
@@ -27,17 +32,17 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"@thomasskk/node-utils": "latest",
-		"@sinclair/typebox": "^0.32.20"
+		"@sinclair/typebox": "^0.32.35",
+		"@thomasskk/node-utils": "latest"
 	},
 	"devDependencies": {
 		"@rollup/plugin-terser": "^0.4.4",
 		"@rollup/plugin-typescript": "^11.1.6",
-		"@types/node": "^20.12.2",
-		"rollup": "^4.13.2",
-		"semantic-release": "^23.0.8",
-		"tsx": "^4.7.3",
-		"typescript": "^5.4.3",
-		"vitest": "^1.4.0"
+		"@types/node": "^20.16.2",
+		"rollup": "^4.21.2",
+		"semantic-release": "^23.1.1",
+		"tsx": "^4.19.0",
+		"typescript": "^5.5.4",
+		"vitest": "^1.6.0"
 	}
 }

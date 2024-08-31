@@ -1,7 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { TypeCompiler } from "@sinclair/typebox/compiler";
-import { download, sizeof, xml2js } from "@thomasskk/node-utils";
+import { download } from "@thomasskk/node-utils/core";
+import { xml2js } from "@thomasskk/node-utils/xml2js";
+import { sizeof } from "@thomasskk/node-utils/sizeof";
 import { type Territory, XMLSchema } from "../src/schema.js";
 
 const __dirname = new URL(".", import.meta.url).pathname;

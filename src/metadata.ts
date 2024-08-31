@@ -1,4 +1,4 @@
-import { valueInObj } from "@thomasskk/node-utils";
+import { valueInObj } from "@thomasskk/node-utils/core";
 import metadata from "../metadata.json" assert { type: "json" };
 import { getNumberType } from "./getCountryByNationalNumber.js";
 import type { Territory } from "./schema.js";
